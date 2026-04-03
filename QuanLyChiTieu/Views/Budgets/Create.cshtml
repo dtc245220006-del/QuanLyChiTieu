@@ -1,0 +1,51 @@
+﻿@model QuanLyChiTieu.Models.Budget
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Budget</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BudgetId" class="control-label"></label>
+                <input asp-for="BudgetId" class="form-control" />
+                <span asp-validation-for="BudgetId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="LimitAmount" class="control-label"></label>
+                <input asp-for="LimitAmount" class="form-control" />
+                <span asp-validation-for="LimitAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MonthYear" class="control-label"></label>
+                <input asp-for="MonthYear" class="form-control" />
+                <span asp-validation-for="MonthYear" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
