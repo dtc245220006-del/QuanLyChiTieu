@@ -5,11 +5,11 @@ namespace QuanLyChiTieu.Models;
 
 public partial class Transaction
 {
-    public string TransactionId { get; set; } = null!;
+    public string? TransactionId { get; set; } = null!;
 
-    public string WalletId { get; set; } = null!;
+    public string? WalletId { get; set; } = null!;
 
-    public string CategoryId { get; set; } = null!;
+    public string? CategoryId { get; set; } = null!;
 
     public decimal Amount { get; set; }
 

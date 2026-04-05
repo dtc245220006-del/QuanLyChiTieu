@@ -1,30 +1,24 @@
 ﻿@model IEnumerable<QuanLyChiTieu.Models.Budget>
-
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
+<h1>Quản lí ngân sách</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Tạo mới</a>
 </p>
-<table class="table">
+<table class="table table-hover mt-2">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.LimitAmount)
+                Số tiền giới hạn
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MonthYear)
+                Ngày/tháng
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+               Danh mục
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
+                Khách hàng
+            </th>           
         </tr>
     </thead>
     <tbody>

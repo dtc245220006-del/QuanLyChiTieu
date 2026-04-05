@@ -1,25 +1,21 @@
 ﻿@model IEnumerable<QuanLyChiTieu.Models.UserAccount>
 
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
+<h1>Danh sách người dùng</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Thêm người dùng</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Username)
+               Họ tên
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
+                Mật khẩu
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                Email
             </th>
             <th></th>
         </tr>
@@ -37,11 +33,11 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.UserId">chi tiết</a>|
+                <a asp-action="Edit" asp-route-id="@item.UserId">Sửa </a>       |
+                <a asp-action="Delete" asp-route-id="@item.UserId">Xóa</a>
             </td>
         </tr>
-}
+} 
     </tbody>
 </table>
