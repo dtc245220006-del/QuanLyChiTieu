@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyChiTieu.Models;
+using Microsoft.AspNetCore.Authorization; // Thêm cái này ở đầu file
+
+
 
 namespace QuanLyChiTieu.Controllers
 {
