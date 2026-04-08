@@ -1,8 +1,58 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Tổng quan tài chính";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-success fw-bold">📊 Tổng quan tài chính</h2>
+        <a asp-controller="Transactions" asp-action="Create" class="btn btn-success btn-lg shadow-sm rounded-pill">
+            ➕ Thêm giao dịch
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow h-100 border-0" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase fw-bold text-white-50">💳 Tổng số dư</h6>
+                    <h2 class="mb-0 fw-bold">15,500,000 đ</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white shadow h-100 border-0" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase fw-bold text-white-50">📈 Tổng thu tháng</h6>
+                    <h2 class="mb-0 fw-bold">+20,000,000 đ</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white shadow h-100 border-0" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase fw-bold text-white-50">📉 Tổng chi tháng</h6>
+                    <h2 class="mb-0 fw-bold">-4,500,000 đ</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark shadow h-100 border-0" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase fw-bold text-black-50">🎯 Ngân sách</h6>
+                    <h2 class="mb-0 fw-bold">An toàn</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5" />
+
+    <div class="row">
+        <div class="col-md-12 text-center text-muted">
+            <p><i>Khu vực này có thể để một danh sách 5 giao dịch gần nhất hoặc một biểu đồ chi tiêu.</i></p>
+        </div>
+    </div>
 </div>
