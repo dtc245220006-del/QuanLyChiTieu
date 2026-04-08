@@ -23,15 +23,15 @@ namespace QuanLyChiTieu.Controllers
         [HttpPost]
         public IActionResult Register(UserAccount user)
         {
-            // Kiểm tra xem Email đã bị thằng khác đăng ký chưa
-            var checkEmail = _context.UserAccounts.FirstOrDefault(u => u.Email == user.Email);
-            if (checkEmail != null)
+            if (_context.UserAccounts.Any(u => u.Email == user.Email))
             {
                 ViewBag.Error = "Email này đã được sử dụng!";
                 return View();
             }
 
-            // Lưu thẳng vào Database
+            // ensure PK is set server-side
+            user.UserId = Guid.NewGuid().ToString();
+
             _context.UserAccounts.Add(user);
             _context.SaveChanges();
 

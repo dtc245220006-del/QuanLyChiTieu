@@ -42,8 +42,8 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    // Chỗ này này: Đổi Home thành Account, Index thành Login
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 
 app.Run();
