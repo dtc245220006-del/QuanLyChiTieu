@@ -48,7 +48,6 @@ namespace QuanLyChiTieu.Controllers
         {
             // Tìm user trong DB có khớp email và pass không
             var user = _context.UserAccounts.FirstOrDefault(u => u.Email == email && u.Password == password);
-
             if (user != null)
             {
                 // Tạo "Thẻ căn cước" (Claims) cho user này
