@@ -59,15 +59,28 @@ namespace QuanLyChiTieu.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WalletId,UserId,WalletName,Balance")] Wallet wallet)
+        public async Task<IActionResult> Create([Bind("WalletId,WalletName,Balance")] Wallet wallet)
         {
+            // 1. Tự sinh ID cho Ví (m đã có)
+            if (string.IsNullOrEmpty(wallet.WalletId))
+            {
+                wallet.WalletId = "W" + Guid.NewGuid().ToString().Substring(0, 7).ToUpper();
+            }
+
+            // 2. QUAN TRỌNG: Gán UserId cho ví
+            // Mở SQL Server, xem bảng UserAccount có mã nào (ví dụ 'U001' hoặc 'Admin') rồi điền vào đây
+            wallet.UserId = "2"; // Thay 'U001' bằng một ID thật đang có trong bảng User của m
+
+            // 3. Xóa kiểm tra lỗi Validation cho các bảng liên quan
+            ModelState.Remove("User");
+            ModelState.Remove("Transactions");
+
             if (ModelState.IsValid)
             {
                 _context.Add(wallet);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "UserId", wallet.UserId);
             return View(wallet);
         }
 

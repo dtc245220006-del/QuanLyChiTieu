@@ -1,39 +1,30 @@
 ﻿@model IEnumerable<QuanLyChiTieu.Models.Category>
 
-
-
-<h1>Quản lý danh mục</h1>
-
-<p>
-    <a asp-action="Create">Thêm mới</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Tên danh mục
-            </th>
-            <th>
-                Loại(thu/chi)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.CategoryId">Chi tiết</a> |
-                <a asp-action="Edit" asp-route-id="@item.CategoryId">Sửa</a> |         
-                <a asp-action="Delete" asp-route-id="@item.CategoryId">Xóa</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container mt-4">
+    <div class="card shadow border-0" style="border-radius: 15px;">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center" style="border-radius: 15px 15px 0 0;">
+            <h4 class="mb-0 text-primary fw-bold"><i class="bi bi-tags-fill"></i> Quản lý Danh mục</h4>
+            <a asp-action="Create" class="btn btn-primary rounded-pill shadow-sm">
+                <i class="bi bi-plus-lg"></i> Thêm loại mới
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center p-3 border rounded-3 bg-light shadow-sm">
+                            <div>
+                                <span class="fw-bold text-dark">@item.CategoryName</span>
+                            </div>
+                            <div class="btn-group">
+                                <a asp-action="Edit" asp-route-id="@item.CategoryId" class="btn btn-sm text-primary p-1"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.CategoryId" class="btn btn-sm text-danger p-1"><i class="bi bi-x-circle-fill"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

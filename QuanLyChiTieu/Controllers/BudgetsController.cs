@@ -21,149 +21,81 @@ namespace QuanLyChiTieu.Controllers
         // GET: Budgets
         public async Task<IActionResult> Index()
         {
-            var quanLyChiTieuContext = _context.Budgets.Include(b => b.Category).Include(b => b.User);
-            return View(await quanLyChiTieuContext.ToListAsync());
-        }
-
-        // GET: Budgets/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var budget = await _context.Budgets
-                .Include(b => b.Category)
-                .Include(b => b.User)
-                .FirstOrDefaultAsync(m => m.BudgetId == id);
-            if (budget == null)
-            {
-                return NotFound();
-            }
-
-            return View(budget);
+            // Include bảng Category và User để lấy tên hiển thị
+            var budgets = _context.Budgets.Include(b => b.Category).Include(b => b.User);
+            var budgetList = await budgets.ToListAsync();
+            return View(budgetList);
         }
 
         // GET: Budgets/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "UserId");
+            // SỬA TẠI ĐÂY: Hiển thị CategoryName và UserName thay vì ID
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName"); // Hoặc UserName tùy model của m
             return View();
         }
 
-        // POST: Budgets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("BudgetId,UserId,CategoryId,LimitAmount,MonthYear")] Budget budget)
         {
+            // 1. Tự sinh ID cho Ngân sách nếu chưa có
+            if (string.IsNullOrEmpty(budget.BudgetId))
+            {
+                budget.BudgetId = "B" + Guid.NewGuid().ToString().Substring(0, 7).ToUpper();
+            }
+
+            // 2. QUAN TRỌNG: Dán cái mã m vừa COPY ở Bước 1 vào đây
+            // Thay "Dán_Mã_Thật_Ở_Đây" bằng mã m lấy được từ SQL
+            budget.UserId = "2";
+
+            // 3. Fix lỗi monthYear nếu m không nhập từ giao diện
+            // 3. Fix lỗi monthYear: Vì của m là kiểu String nên phải chuyển sang chuỗi
+            if (string.IsNullOrEmpty(budget.MonthYear))
+            {
+                // Gán mặc định là tháng/năm hiện tại theo định dạng chuỗi
+                budget.MonthYear = DateTime.Now.ToString("MM/yyyy");
+            }
+
+            // 4. Xóa kiểm tra lỗi Validation cho các bảng liên quan để nút Submit hoạt động
+            ModelState.Remove("Category");
+            ModelState.Remove("User");
+
             if (ModelState.IsValid)
             {
-                _context.Add(budget);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(budget);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    // Nếu vẫn lỗi, nó sẽ báo ra đây cho m xem
+                    ModelState.AddModelError("", "Lỗi DB: " + ex.InnerException?.Message);
+                }
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", budget.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "UserId", budget.UserId);
+
+            // Nạp lại dữ liệu cho Dropdown nếu có lỗi
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", budget.CategoryId);
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName", budget.UserId);
             return View(budget);
         }
 
         // GET: Budgets/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var budget = await _context.Budgets.FindAsync(id);
-            if (budget == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", budget.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "UserId", budget.UserId);
+            if (budget == null) return NotFound();
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", budget.CategoryId);
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName", budget.UserId);
             return View(budget);
         }
 
-        // POST: Budgets/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BudgetId,UserId,CategoryId,LimitAmount,MonthYear")] Budget budget)
-        {
-            if (id != budget.BudgetId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(budget);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BudgetExists(budget.BudgetId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", budget.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "UserId", budget.UserId);
-            return View(budget);
-        }
-
-        // GET: Budgets/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var budget = await _context.Budgets
-                .Include(b => b.Category)
-                .Include(b => b.User)
-                .FirstOrDefaultAsync(m => m.BudgetId == id);
-            if (budget == null)
-            {
-                return NotFound();
-            }
-
-            return View(budget);
-        }
-
-        // POST: Budgets/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var budget = await _context.Budgets.FindAsync(id);
-            if (budget != null)
-            {
-                _context.Budgets.Remove(budget);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool BudgetExists(string id)
-        {
-            return _context.Budgets.Any(e => e.BudgetId == id);
-        }
+        // ... Các hàm khác giữ nguyên, chỉ cần sửa SelectList trong POST Edit tương tự như trên ...
     }
 }

@@ -55,6 +55,13 @@ namespace QuanLyChiTieu.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,Type")] Category category)
         {
+            // TỰ SINH ID: Nếu người dùng không nhập (hoặc m không làm ô nhập), mình tự tạo mã
+            if (string.IsNullOrEmpty(category.CategoryId))
+            {
+                // Tạo mã ngẫu nhiên kiểu CAT001, CAT002... hoặc dùng Guid cho nhanh
+                category.CategoryId = "CAT" + Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(category);

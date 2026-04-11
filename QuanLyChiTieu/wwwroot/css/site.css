@@ -29,3 +29,21 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+/* Làm bo góc cho các ô input */
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+
+/* Hiệu ứng khi di chuột vào hàng trong bảng */
+.table-hover tbody tr:hover {
+    background-color: rgba(46, 204, 113, 0.05);
+    transition: 0.3s;
+}
+
+/* Badge đẹp hơn */
+.badge {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+}

@@ -1,47 +1,38 @@
 ﻿@model IEnumerable<QuanLyChiTieu.Models.Budget>
-<h1>Quản lí ngân sách</h1>
 
-<p>
-    <a asp-action="Create">Tạo mới</a>
-</p>
-<table class="table table-hover mt-2">
-    <thead>
-        <tr>
-            <th>
-                Số tiền giới hạn
-            </th>
-            <th>
-                Ngày/tháng
-            </th>
-            <th>
-               Danh mục
-            </th>
-            <th>
-                Khách hàng
-            </th>           
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LimitAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MonthYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.UserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BudgetId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BudgetId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BudgetId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-danger fw-bold"><i class="bi bi-alarm"></i> Kế hoạch Ngân sách</h3>
+        <a asp-action="Create" class="btn btn-danger rounded-pill"><i class="bi bi-patch-plus"></i> Thiết lập mục tiêu</a>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h5 class="fw-bold">@item.Category?.CategoryName</h5>
+                            <span class="text-muted">Hạn mức: <b class="text-dark">@item.LimitAmount.ToString("N0") đ</b></span>
+                        </div>
+                        
+                        <div class="progress mb-3" style="height: 12px; border-radius: 10px;">
+                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
+                                 role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Còn lại: <b>30%</b></small>
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@item.BudgetId" class="btn btn-sm btn-outline-secondary border-0"><i class="bi bi-gear"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.BudgetId" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -12,7 +12,7 @@
                     <h4 class="mb-0 fw-bold">💸 Ghi Chép Chi Tiêu</h4>
                 </div>
                 <div class="card-body p-4">
-                    <form asp-action="Create">
+                    <form asp-action="Create" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="mb-3">
@@ -60,8 +60,3 @@
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

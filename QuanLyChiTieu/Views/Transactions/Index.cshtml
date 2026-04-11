@@ -1,56 +1,52 @@
 ﻿@model IEnumerable<QuanLyChiTieu.Models.Transaction>
-<h1>Quản lý giao dịch</h1>
 
-<p>
-    <a asp-action="Create">Tạo giao dịch</a>
-</p>
-<table class="table table-hover mt-2">
-    <thead>
-        <tr>
-            <th>
-               Số tiền
-            </th>
-            <th>
-                Thời gian
-            </th>
-            <th>
-                Ví
-            </th>
-            <th>
-               Danh mục
-            </th>
-            <th>
-               Ghi chú
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TransactionDate)
-            </td>
-            <td>
-                
-                @Html.DisplayFor(modelItem => item.Wallet.WalletId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryId)
-            </td>
-            <td>
-               
-                @Html.DisplayFor(modelItem => item.Note)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.TransactionId">Chi tiết</a> |
-                <a asp-action="Edit" asp-route-id="@item.TransactionId">Sửa</a> |         
-                <a asp-action="Delete" asp-route-id="@item.TransactionId">Xóa</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="container mt-4">
+    <div class="card shadow border-0" style="border-radius: 15px;">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center" style="border-radius: 15px 15px 0 0;">
+            <h4 class="mb-0 text-success fw-bold"><i class="bi bi-list-ul"></i> Lịch Sử Giao Dịch</h4>
+            <a asp-action="Create" class="btn btn-success rounded-pill shadow-sm">
+                <i class="bi bi-plus-circle"></i> Thêm mới
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Ngày</th>
+                            <th>Danh mục</th>
+                            <th>Ví sử dụng</th>
+                            <th>Ghi chú</th>
+                            <th class="text-end pe-4">Số tiền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">@(item.TransactionDate.HasValue ? item.TransactionDate.Value.ToString("dd/MM/yyyy") : String.Empty)</td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                                </td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Wallet.WalletName)
+                                </td>
+                                <td class="text-muted small">@item.Note</td>
+                                <td class="text-end pe-4 fw-bold @(item.Amount < 0 ? "text-danger" : "text-success")">
+                                    @(item.Amount.ToString("N0")) đ
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.TransactionId" class="btn btn-sm btn-outline-primary border-0"><i class="bi bi-pencil"></i></a>
+                                    <a asp-action="Delete" asp-route-id="@item.TransactionId" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

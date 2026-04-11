@@ -1,43 +1,33 @@
 ﻿@model QuanLyChiTieu.Models.Category
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm Danh Mục";
 }
 
-<h1>Create</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header bg-primary text-white text-center py-3" style="border-radius: 20px 20px 0 0;">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-tag"></i> Tạo Danh Mục Mới</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tên danh mục</label>
+                            <input asp-for="CategoryName" class="form-control border-primary" placeholder="Ví dụ: Ăn uống, Di chuyển..." required />
+                            <span asp-validation-for="CategoryName" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold">Xác nhận tạo</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="CategoryName" class="control-label"></label>
-                <input asp-for="CategoryName" class="form-control" />
-                <span asp-validation-for="CategoryName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <input asp-for="Type" class="form-control" />
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
