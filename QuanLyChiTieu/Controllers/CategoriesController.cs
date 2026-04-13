@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyChiTieu.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyChiTieu.Controllers
 {
+    // Allow authenticated users to view categories; restrict management actions to Admins
+    [Authorize]
     public class CategoriesController : Controller
     {
         private readonly QuanLyChiTieuContext _context;
@@ -43,6 +46,7 @@ namespace QuanLyChiTieu.Controllers
         }
 
         // GET: Categories/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +57,7 @@ namespace QuanLyChiTieu.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,Type")] Category category)
         {
             // TỰ SINH ID: Nếu người dùng không nhập (hoặc m không làm ô nhập), mình tự tạo mã
@@ -72,6 +77,7 @@ namespace QuanLyChiTieu.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -92,6 +98,7 @@ namespace QuanLyChiTieu.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id, [Bind("CategoryId,CategoryName,Type")] Category category)
         {
             if (id != category.CategoryId)
@@ -123,6 +130,7 @@ namespace QuanLyChiTieu.Controllers
         }
 
         // GET: Categories/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -143,6 +151,7 @@ namespace QuanLyChiTieu.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var category = await _context.Categories.FindAsync(id);

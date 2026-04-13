@@ -1,43 +1,157 @@
 ﻿@model IEnumerable<QuanLyChiTieu.Models.UserAccount>
 
-<h1>Danh sách người dùng</h1>
+@{
+    ViewData["Title"] = "Quản Lý Thành Viên";
+}
 
-<p>
-    <a asp-action="Create">Thêm người dùng</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-               Họ tên
-            </th>
-            <th>
-                Mật khẩu
-            </th>
-            <th>
-                Email
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.UserId">chi tiết</a>|
-                <a asp-action="Edit" asp-route-id="@item.UserId">Sửa </a>       |
-                <a asp-action="Delete" asp-route-id="@item.UserId">Xóa</a>
-            </td>
-        </tr>
-} 
-    </tbody>
-</table>
+<style>
+    /* Tổng thể trang */
+    body {
+        background-color: #f4f7f6;
+    }
+
+    /* Tiêu đề trang */
+    .page-header {
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #2ecc71;
+    }
+
+    /* Làm đẹp cái nút Thêm mới */
+    .btn-create {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 50px;
+        padding: 10px 25px;
+        transition: 0.3s;
+        box-shadow: 0 4px 6px rgba(46, 204, 113, 0.3);
+    }
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(46, 204, 113, 0.5);
+        color: white;
+    }
+
+    /* Khu vực bảng dữ liệu */
+    .user-table-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .table-custom {
+        margin-bottom: 0;
+    }
+    .table-custom thead th {
+        border-top: none;
+        background-color: #f8f9fa;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1px;
+        padding: 15px;
+    }
+    .table-custom tbody td {
+        padding: 15px;
+        vertical-align: middle;
+        border-color: #f1f1f1;
+    }
+
+    /* Làm nổi bật cái Mail */
+    .user-email {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    /* Che mật khẩu */
+    .password-mask {
+        letter-spacing: 3px;
+        color: #bdc3c7;
+    }
+
+    /* Cột thao tác */
+    .action-btns {
+        white-space: nowrap;
+    }
+    .btn-action {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 2px;
+        transition: 0.2s;
+        border: none;
+    }
+    
+    .btn-details { background-color: #e3f2fd; color: #1976d2; }
+    .btn-details:hover { background-color: #1976d2; color: white; }
+    
+    .btn-edit { background-color: #fff3e0; color: #f57c00; }
+    .btn-edit:hover { background-color: #f57c00; color: white; }
+    
+    .btn-delete { background-color: #ffebee; color: #d32f2f; }
+    .btn-delete:hover { background-color: #d32f2f; color: white; }
+
+</style>
+
+<div class="container mt-5">
+    <div class="row page-header align-items-center">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-dark m-0"><i class="bi bi-people-fill text-success"></i> Danh sách người dùng</h1>
+            <p class="text-muted m-0">Quản lý và phân quyền thành viên trong hệ thống</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="Create" class="btn btn-create">
+                <i class="bi bi-person-plus-fill"></i> TẠO THÀNH VIÊN MỚI
+            </a>
+        </div>
+    </div>
+
+    <div class="user-table-container">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped table-custom">
+                <thead>
+                    <tr>
+                        <th>Hoàn Thành</th>
+                        <th>Email</th>
+                        <th>Mật khẩu</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model) {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                @* Thêm cái Icon đại diện cho nó oai *@
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; border: 1px solid #eee;">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div>
+                                    <div class="user-email">@item.Username</div>
+                                    <div class="text-muted small">@item.Role</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="user-email">@item.Email</td>
+                        <td class="password-mask">@(String.IsNullOrEmpty(item.Password) ? "••••••••" : new string('•', Math.Max(6, item.Password.Length)))</td>
+                        <td class="text-center action-btns">
+                            <a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-action btn-details" title="Details"><i class="bi bi-eye"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-action btn-edit" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <form asp-action="Delete" asp-route-id="@item.UserId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-action btn-delete" onclick="return confirm('Are you sure you want to delete this user?');"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

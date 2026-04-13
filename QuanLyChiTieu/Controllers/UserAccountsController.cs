@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using QuanLyChiTieu.Models;
 
 namespace QuanLyChiTieu.Controllers
 {
+    [Authorize(Roles = "Admin")] // Chỉ ông nào có Role="Admin" mới được mở controller này
     public class UserAccountsController : Controller
     {
         private readonly QuanLyChiTieuContext _context;

@@ -32,6 +32,9 @@ namespace QuanLyChiTieu.Controllers
             // ensure PK is set server-side
             user.UserId = Guid.NewGuid().ToString();
 
+            // default role = User (admin can be set later manually or by seeding)
+            user.Role = "User";
+
             _context.UserAccounts.Add(user);
             _context.SaveChanges();
 
@@ -55,7 +58,8 @@ namespace QuanLyChiTieu.Controllers
                 {
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim("UserId", user.UserId.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email)
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role ?? "User")
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -1,0 +1,30 @@
+@model QuanLyChiTieu.Models.UserAccount
+
+@{
+    ViewData["Title"] = "Xóa thành viên";
+}
+
+<div class="container mt-4">
+    <div class="card border-danger shadow-sm">
+        <div class="card-body">
+            <h5 class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Xác nhận xóa</h5>
+            <p>Bạn sắp xóa tài khoản <strong>@Model.Username</strong> (<span class="text-muted">@Model.Email</span>). Hành động này không thể hoàn tác.</p>
+
+            <dl class="row">
+                <dt class="col-sm-3">UserId</dt>
+                <dd class="col-sm-9">@Model.UserId</dd>
+
+                <dt class="col-sm-3">Role</dt>
+                <dd class="col-sm-9">@Model.Role</dd>
+            </dl>
+
+            <div class="d-flex justify-content-end">
+                <a asp-action="Index" class="btn btn-secondary me-2"><i class="bi bi-arrow-left"></i> Hủy</a>
+                <form asp-action="Delete" asp-route-id="@Model.UserId" method="post" onsubmit="return confirm('Xác nhận xóa tài khoản này?');" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa vĩnh viễn</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

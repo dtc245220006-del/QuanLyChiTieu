@@ -20,6 +20,8 @@ builder.Services.AddDbContext<QuanLyChiTieuContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// Thêm vào sau dòng builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -45,5 +47,24 @@ app.MapControllerRoute(
     // Chỗ này này: Đổi Home thành Account, Index thành Login
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
+// Insert this before app.Run(); it seeds an admin user if not present.
+// Requires the UserAccount.Role column to exist in the DB.
+using (var scope = app.Services.CreateScope())
+{
+    var ctx = scope.ServiceProvider.GetRequiredService<QuanLyChiTieuContext>();
+
+    if (!ctx.UserAccounts.Any(u => u.Email == "admin@local"))
+    {
+        ctx.UserAccounts.Add(new UserAccount
+        {
+            UserId = Guid.NewGuid().ToString(),
+            Username = "Admin",
+            Email = "admin@local",
+            Password = "admin123", // insecure: see notes
+            Role = "Admin"
+        });
+        ctx.SaveChanges();
+    }
+}
 
 app.Run();

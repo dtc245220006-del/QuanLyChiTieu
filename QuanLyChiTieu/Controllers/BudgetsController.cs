@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyChiTieu.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyChiTieu.Controllers
 {
+    // Require authenticated users for budgets; admins can be allowed additional actions if needed
+    [Authorize]
     public class BudgetsController : Controller
     {
         private readonly QuanLyChiTieuContext _context;
@@ -96,6 +99,62 @@ namespace QuanLyChiTieu.Controllers
             return View(budget);
         }
 
-        // ... Các hàm khác giữ nguyên, chỉ cần sửa SelectList trong POST Edit tương tự như trên ...
+        // POST: Budgets/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, [Bind("BudgetId,UserId,CategoryId,LimitAmount,MonthYear")] Budget budget)
+        {
+            if (id != budget.BudgetId) return NotFound();
+
+            // 3. Fix lỗi monthYear: Vì của m là kiểu String nên phải chuyển sang chuỗi
+            if (string.IsNullOrEmpty(budget.MonthYear))
+            {
+                // Gán mặc định là tháng/năm hiện tại theo định dạng chuỗi
+                budget.MonthYear = DateTime.Now.ToString("MM/yyyy");
+            }
+
+            // Xóa kiểm tra lỗi Validation cho các bảng liên quan để nút Submit hoạt động
+            ModelState.Remove("Category");
+            ModelState.Remove("User");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Không làm thay đổi UserId và MonthYear trong quá trình chỉnh sửa
+                    var existingBudget = await _context.Budgets.AsNoTracking().FirstOrDefaultAsync(b => b.BudgetId == id);
+                    budget.UserId = existingBudget.UserId;
+                    budget.MonthYear = existingBudget.MonthYear;
+
+                    _context.Update(budget);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BudgetExists(budget.BudgetId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi DB: " + ex.InnerException?.Message);
+                }
+            }
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", budget.CategoryId);
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName", budget.UserId);
+            return View(budget);
+        }
+
+        private bool BudgetExists(string id)
+        {
+            return _context.Budgets.Any(e => e.BudgetId == id);
+        }
     }
 }
