@@ -49,21 +49,17 @@ namespace QuanLyChiTieu.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,Type")] Category category)
         {
-            // Sửa chỗ này cho khớp với SQL m vừa viết
-            if (category.Type == "Expense")
+            // --- THÊM ĐOẠN NÀY ---
+            if (string.IsNullOrEmpty(category.CategoryId))
             {
-                category.Type = "CHI";
+                // Tạo mã ngẫu nhiên khoảng 8 ký tự, ví dụ: CAT-a1b2c3d4
+                category.CategoryId = "CAT-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
             }
-            else if (category.Type == "Income")
-            {
-                category.Type = "THU";
-            }
+            // ---------------------
 
-            // Ensure Type is a valid, non-empty value accepted by DB check constraint
-            if (string.IsNullOrWhiteSpace(category.Type))
-            {
-                category.Type = "Expense";
-            }
+            // Giữ nguyên logic đổi THU/CHI hôm nọ t bảo m
+            if (category.Type == "Expense") category.Type = "CHI";
+            else if (category.Type == "Income") category.Type = "THU";
 
             if (ModelState.IsValid)
             {
@@ -73,7 +69,6 @@ namespace QuanLyChiTieu.Controllers
             }
             return View(category);
         }
-
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
@@ -86,33 +81,29 @@ namespace QuanLyChiTieu.Controllers
 
         // POST: Categories/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CategoryId,CategoryName,Type")] Category category)
-        {
-            if (id != category.CategoryId) return NotFound();
+[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([Bind("CategoryId,CategoryName,Type")] Category category)
+{
+    // --- THÊM ĐOẠN NÀY ---
+    if (string.IsNullOrEmpty(category.CategoryId))
+    {
+        // Tạo mã ngẫu nhiên khoảng 8 ký tự, ví dụ: CAT-a1b2c3d4
+        category.CategoryId = "CAT-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+    }
+    // ---------------------
 
-            // Normalize Type to valid default if empty
-            if (string.IsNullOrWhiteSpace(category.Type))
-            {
-                category.Type = "Expense";
-            }
+    // Giữ nguyên logic đổi THU/CHI hôm nọ t bảo m
+    if (category.Type == "Expense") category.Type = "CHI";
+    else if (category.Type == "Income") category.Type = "THU";
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoryExists(category.CategoryId)) return NotFound();
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(category);
-        }
+    if (ModelState.IsValid)
+    {
+        _context.Add(category);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    return View(category);
+}
 
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(string id)

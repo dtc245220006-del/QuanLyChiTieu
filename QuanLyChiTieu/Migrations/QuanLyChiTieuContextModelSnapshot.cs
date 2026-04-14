@@ -262,7 +262,7 @@ namespace QuanLyChiTieu.Migrations
                 {
                     b.Navigation("Transactions");
                 });
-#pragma warning restore 612, 618
+
         }
     }
 }

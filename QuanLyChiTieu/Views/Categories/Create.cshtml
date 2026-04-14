@@ -6,37 +6,72 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                <div class="card-header bg-primary text-white text-center py-3" style="border-radius: 20px 20px 0 0;">
-                    <h4 class="mb-0 fw-bold"><i class="bi bi-tag"></i> Tạo Danh Mục Mới</h4>
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
+                @* Header với màu Gradient cho pro *@
+                <div class="card-header bg-success text-white text-center py-4" style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); border: none;">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-plus-circle-dotted"></i> Tạo Danh Mục Mới</h4>
+                    <small class="opacity-75">Phân loại các khoản thu chi của bạn</small>
                 </div>
+
                 <div class="card-body p-4">
                     <form asp-action="Create" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Tên danh mục</label>
-                            <input asp-for="CategoryName" class="form-control border-primary" placeholder="Ví dụ: Ăn uống, Di chuyển..." required />
+                        @* 1. Mã Danh Mục - Rất quan trọng vì SQL của m không tự tăng *@
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-dark"><i class="bi bi-hash text-success"></i> Mã danh mục</label>
+                            <input asp-for="CategoryId" class="form-control border-success-subtle shadow-sm"
+                                   placeholder="Ví dụ: C01, C02..." required
+                                   style="border-radius: 8px;" />
+                            <small class="text-muted">Nhập mã duy nhất (không trùng lặp)</small>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        @* 2. Tên Danh Mục *@
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-dark"><i class="bi bi-fonts text-success"></i> Tên danh mục</label>
+                            <input asp-for="CategoryName" class="form-control border-success-subtle shadow-sm"
+                                   placeholder="Ví dụ: Ăn uống, Tiền lương..." required
+                                   style="border-radius: 8px;" />
                             <span asp-validation-for="CategoryName" class="text-danger"></span>
                         </div>
 
+                        @* 3. Loại Thu/Chi *@
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Loại (Thu / Chi)</label>
-                            <select asp-for="Type" class="form-select border-primary" required>
-                                <option value="Expense">Chi</option>
+                            <label class="form-label fw-bold text-dark"><i class="bi bi-arrow-left-right text-success"></i> Loại giao dịch</label>
+                            <select asp-for="Type" class="form-select border-success-subtle shadow-sm" required style="border-radius: 8px;">
+                                <option value="Expense">Chi </option>
                                 <option value="Income">Thu</option>
                             </select>
                             <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
 
+                        @* Nút bấm *@
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg fw-bold">Xác nhận tạo</button>
-                            <a asp-action="Index" class="btn btn-outline-secondary">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm" style="border-radius: 10px;">
+                                <i class="bi bi-check-lg"></i> XÁC NHẬN TẠO
+                            </button>
+                            <a asp-action="Index" class="btn btn-light btn-sm text-secondary mt-2">
+                                <i class="bi bi-chevron-left"></i> Quay lại danh sách
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
+            
+            @* Một cái Tip nhỏ cho người dùng bên dưới *@
+            <div class="text-center mt-3">
+                <p class="text-muted small">
+                    <i class="bi bi-info-circle"></i> <b>Lưu ý:</b> Mã danh mục sẽ không thể sửa sau khi tạo.
+                </p>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

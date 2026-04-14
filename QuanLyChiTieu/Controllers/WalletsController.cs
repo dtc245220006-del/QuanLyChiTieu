@@ -9,7 +9,6 @@ using QuanLyChiTieu.Models;
 using Microsoft.AspNetCore.Authorization; // Thêm cái này ở đầu file
 
 
-
 namespace QuanLyChiTieu.Controllers
 {
     public class WalletsController : Controller
@@ -113,12 +112,29 @@ namespace QuanLyChiTieu.Controllers
                 return NotFound();
             }
 
+            // Remove navigation properties from model validation (they are not submitted by the form)
+            ModelState.Remove("User");
+            ModelState.Remove("Transactions");
+
+            // Null navigation props to avoid EF attempting to attach incomplete objects
+            wallet.User = null;
+            wallet.Transactions = null;
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(wallet);
+                    var existing = await _context.Wallets.FindAsync(id);
+                    if (existing == null) return NotFound();
+
+                    // Update only allowed fields
+                    existing.UserId = wallet.UserId;
+                    existing.WalletName = wallet.WalletName;
+                    existing.Balance = wallet.Balance;
+
+                    _context.Update(existing);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -131,7 +147,10 @@ namespace QuanLyChiTieu.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi lưu Database: " + ex.Message);
+                }
             }
             ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "UserId", wallet.UserId);
             return View(wallet);

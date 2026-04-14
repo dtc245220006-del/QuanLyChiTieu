@@ -59,6 +59,58 @@ namespace QuanLyChiTieu.Controllers
             return View(transaction);
         }
 
+        // POST: Transactions/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, [Bind("TransactionId,WalletId,CategoryId,Amount,Note,TransactionDate")] Transaction transaction)
+        {
+            if (id == null || id != transaction.TransactionId)
+            {
+                return BadRequest();
+            }
+
+            // Remove navigation properties from model validation and prevent EF from tracking them here
+            ModelState.Remove("Category");
+            ModelState.Remove("Wallet");
+            ModelState.Remove("User");
+            transaction.Category = null;
+            transaction.Wallet = null;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var existing = await _context.Transactions.FindAsync(id);
+                    if (existing == null) return NotFound();
+
+                    // Update only allowed fields to avoid accidental key changes
+                    existing.WalletId = transaction.WalletId;
+                    existing.CategoryId = transaction.CategoryId;
+                    existing.Amount = transaction.Amount;
+                    existing.Note = transaction.Note;
+                    existing.TransactionDate = transaction.TransactionDate;
+
+                    _context.Update(existing);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TransactionExists(transaction.TransactionId)) return NotFound();
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi lưu Database: " + ex.Message);
+                }
+            }
+
+            // If we get here something failed; repopulate selects and return view
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", transaction.CategoryId);
+            ViewData["WalletId"] = new SelectList(_context.Wallets, "WalletId", "WalletName", transaction.WalletId);
+            return View(transaction);
+        }
+
         // GET: Transactions/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
@@ -73,7 +125,7 @@ namespace QuanLyChiTieu.Controllers
             return View(transaction);
         }
 
-        // ... Các hàm HttpPost Edit và Delete giữ nguyên logic cũ ...
+        // ... Các hàm HttpPost Create và Delete giữ nguyên logic cũ ...
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -90,6 +142,10 @@ namespace QuanLyChiTieu.Controllers
             ModelState.Remove("Category");
             ModelState.Remove("Wallet");
             ModelState.Remove("User");
+
+            // Ensure navigation properties are null so EF won't try to track an entity with a null key
+            transaction.Category = null;
+            transaction.Wallet = null;
 
             if (ModelState.IsValid)
             {
