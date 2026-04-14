@@ -59,6 +59,18 @@ namespace QuanLyChiTieu.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Ensure a non-null primary key before tracking/adding the entity
+                if (string.IsNullOrEmpty(userAccount.UserId))
+                {
+                    userAccount.UserId = Guid.NewGuid().ToString();
+                }
+
+                // Ensure Role has a sensible default (optional)
+                if (string.IsNullOrEmpty(userAccount.Role))
+                {
+                    userAccount.Role = "User";
+                }
+
                 _context.Add(userAccount);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -59,6 +59,20 @@ namespace QuanLyChiTieu.Controllers
             return View(transaction);
         }
 
+        // GET: Transactions/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null) return NotFound();
+
+            var transaction = await _context.Transactions
+                .Include(t => t.Category)
+                .Include(t => t.Wallet)
+                .FirstOrDefaultAsync(m => m.TransactionId == id);
+
+            if (transaction == null) return NotFound();
+            return View(transaction);
+        }
+
         // ... Các hàm HttpPost Edit và Delete giữ nguyên logic cũ ...
 
         [HttpPost]

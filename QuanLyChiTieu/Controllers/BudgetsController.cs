@@ -33,9 +33,9 @@ namespace QuanLyChiTieu.Controllers
         // GET: Budgets/Create
         public IActionResult Create()
         {
-            // SỬA TẠI ĐÂY: Hiển thị CategoryName và UserName thay vì ID
+            // SỬA TẠI ĐÂY: Hiển thị CategoryName và Username thay vì ID
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName"); // Hoặc UserName tùy model của m
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "Username"); // fixed: use existing property
             return View();
         }
 
@@ -82,7 +82,7 @@ namespace QuanLyChiTieu.Controllers
 
             // Nạp lại dữ liệu cho Dropdown nếu có lỗi
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", budget.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName", budget.UserId);
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "Username", budget.UserId); // fixed: use existing property
             return View(budget);
         }
 
@@ -95,7 +95,7 @@ namespace QuanLyChiTieu.Controllers
             if (budget == null) return NotFound();
 
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", budget.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName", budget.UserId);
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "Username", budget.UserId); // fixed: use existing property
             return View(budget);
         }
 
@@ -148,8 +148,37 @@ namespace QuanLyChiTieu.Controllers
             }
 
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", budget.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "FullName", budget.UserId);
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "Username", budget.UserId); // fixed: use existing property
             return View(budget);
+        }
+
+        // GET: Budgets/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null) return NotFound();
+
+            var budget = await _context.Budgets
+                .Include(b => b.Category)
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(m => m.BudgetId == id);
+
+            if (budget == null) return NotFound();
+            return View(budget);
+        }
+
+        // POST: Budgets/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            var budget = await _context.Budgets.FindAsync(id);
+            if (budget != null)
+            {
+                _context.Budgets.Remove(budget);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         private bool BudgetExists(string id)
