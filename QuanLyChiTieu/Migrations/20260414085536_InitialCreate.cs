@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QuanLyChiTieu.Migrations
 {
     /// <inheritdoc />
-    public partial class InitCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace QuanLyChiTieu.Migrations
                 columns: table => new
                 {
                     categoryId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    categoryName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    categoryName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     type = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true)
                 },
                 constraints: table =>
@@ -29,9 +29,10 @@ namespace QuanLyChiTieu.Migrations
                 columns: table => new
                 {
                     userId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    username = table.Column<string>(type: "nvarchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    password = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
-                    email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false)
+                    username = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    password = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
+                    email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -43,10 +44,10 @@ namespace QuanLyChiTieu.Migrations
                 columns: table => new
                 {
                     budgetId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    userId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    categoryId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    userId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    categoryId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     limitAmount = table.Column<decimal>(type: "decimal(15,2)", nullable: false),
-                    monthYear = table.Column<string>(type: "varchar(7)", unicode: false, maxLength: 7, nullable: false)
+                    monthYear = table.Column<string>(type: "varchar(7)", unicode: false, maxLength: 7, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,8 +69,8 @@ namespace QuanLyChiTieu.Migrations
                 columns: table => new
                 {
                     walletId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    userId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    walletName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    userId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    walletName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     balance = table.Column<decimal>(type: "decimal(15,2)", nullable: true, defaultValue: 0m)
                 },
                 constraints: table =>
@@ -87,8 +88,8 @@ namespace QuanLyChiTieu.Migrations
                 columns: table => new
                 {
                     transactionId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    walletId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    categoryId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    walletId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    categoryId = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     amount = table.Column<decimal>(type: "decimal(15,2)", nullable: false),
                     note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     transactionDate = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")

@@ -40,7 +40,8 @@ namespace QuanLyChiTieu.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
-            return View();
+            // Provide a default Type if you want (optional)
+            return View(new Category { Type = "Expense" });
         }
 
         // POST: Categories/Create
@@ -48,9 +49,20 @@ namespace QuanLyChiTieu.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,Type")] Category category)
         {
-            if (string.IsNullOrEmpty(category.CategoryId))
+            // Sửa chỗ này cho khớp với SQL m vừa viết
+            if (category.Type == "Expense")
             {
-                category.CategoryId = "CAT" + Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
+                category.Type = "CHI";
+            }
+            else if (category.Type == "Income")
+            {
+                category.Type = "THU";
+            }
+
+            // Ensure Type is a valid, non-empty value accepted by DB check constraint
+            if (string.IsNullOrWhiteSpace(category.Type))
+            {
+                category.Type = "Expense";
             }
 
             if (ModelState.IsValid)
@@ -78,6 +90,12 @@ namespace QuanLyChiTieu.Controllers
         public async Task<IActionResult> Edit(string id, [Bind("CategoryId,CategoryName,Type")] Category category)
         {
             if (id != category.CategoryId) return NotFound();
+
+            // Normalize Type to valid default if empty
+            if (string.IsNullOrWhiteSpace(category.Type))
+            {
+                category.Type = "Expense";
+            }
 
             if (ModelState.IsValid)
             {

@@ -12,15 +12,15 @@ using QuanLyChiTieu.Models;
 namespace QuanLyChiTieu.Migrations
 {
     [DbContext(typeof(QuanLyChiTieuContext))]
-    [Migration("20260404083648_InitCreate")]
-    partial class InitCreate
+    [Migration("20260414085640_QuanLyChiTieu")]
+    partial class QuanLyChiTieu
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -34,7 +34,6 @@ namespace QuanLyChiTieu.Migrations
                         .HasColumnName("budgetId");
 
                     b.Property<string>("CategoryId")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
@@ -45,14 +44,12 @@ namespace QuanLyChiTieu.Migrations
                         .HasColumnName("limitAmount");
 
                     b.Property<string>("MonthYear")
-                        .IsRequired()
                         .HasMaxLength(7)
                         .IsUnicode(false)
                         .HasColumnType("varchar(7)")
                         .HasColumnName("monthYear");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
@@ -77,7 +74,6 @@ namespace QuanLyChiTieu.Migrations
                         .HasColumnName("categoryId");
 
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("categoryName");
@@ -107,7 +103,6 @@ namespace QuanLyChiTieu.Migrations
                         .HasColumnName("amount");
 
                     b.Property<string>("CategoryId")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
@@ -125,7 +120,6 @@ namespace QuanLyChiTieu.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("WalletId")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
@@ -150,21 +144,21 @@ namespace QuanLyChiTieu.Migrations
                         .HasColumnName("userId");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("password");
 
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
@@ -191,14 +185,12 @@ namespace QuanLyChiTieu.Migrations
                         .HasColumnName("balance");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("userId");
 
                     b.Property<string>("WalletName")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("walletName");
@@ -216,13 +208,11 @@ namespace QuanLyChiTieu.Migrations
                     b.HasOne("QuanLyChiTieu.Models.Category", "Category")
                         .WithMany("Budgets")
                         .HasForeignKey("CategoryId")
-                        .IsRequired()
                         .HasConstraintName("FK__BUDGET__category__59063A47");
 
                     b.HasOne("QuanLyChiTieu.Models.UserAccount", "User")
                         .WithMany("Budgets")
                         .HasForeignKey("UserId")
-                        .IsRequired()
                         .HasConstraintName("FK__BUDGET__userId__5812160E");
 
                     b.Navigation("Category");
@@ -235,13 +225,11 @@ namespace QuanLyChiTieu.Migrations
                     b.HasOne("QuanLyChiTieu.Models.Category", "Category")
                         .WithMany("Transactions")
                         .HasForeignKey("CategoryId")
-                        .IsRequired()
                         .HasConstraintName("FK__TRANSACTI__categ__5535A963");
 
                     b.HasOne("QuanLyChiTieu.Models.Wallet", "Wallet")
                         .WithMany("Transactions")
                         .HasForeignKey("WalletId")
-                        .IsRequired()
                         .HasConstraintName("FK__TRANSACTI__walle__5441852A");
 
                     b.Navigation("Category");
@@ -254,7 +242,6 @@ namespace QuanLyChiTieu.Migrations
                     b.HasOne("QuanLyChiTieu.Models.UserAccount", "User")
                         .WithMany("Wallets")
                         .HasForeignKey("UserId")
-                        .IsRequired()
                         .HasConstraintName("FK__WALLET__userId__4D94879B");
 
                     b.Navigation("User");

@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold"><i class="bi bi-bar-chart-line"></i> Reports @ViewBag.Year</h3>
+        <form class="d-flex" method="get" asp-action="Index">
+            <select name="year" class="form-select form-select-sm me-2">
+                @for (var yy = DateTime.Now.Year; yy >= DateTime.Now.Year - 5; yy--)
+                {
+                    <option value="@yy" selected="@(yy == (int)ViewBag.Year ? "selected" : null)">@yy</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="mb-3">Spending by Category</h6>
+                <canvas id="categoryChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm p-3">
+                <h6 class="mb-3">Monthly Trend</h6>
+                <canvas id="monthChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Parse server-sent JSON
+        const categoryLabels = @Html.Raw(ViewBag.CategoryLabels ?? "[]");
+        const categoryData = @Html.Raw(ViewBag.CategoryData ?? "[]");
+        const monthLabels = @Html.Raw(ViewBag.MonthLabels ?? "[]");
+        const monthData = @Html.Raw(ViewBag.MonthData ?? "[]");
+
+        // Category pie/bar chart
+        const ctxCat = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctxCat, {
+            type: categoryLabels.length > 6 ? 'bar' : 'pie',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: 'Amount',
+                    data: categoryData,
+                    backgroundColor: categoryLabels.map((_, i) => `hsl(${i * 40 % 360} 70% 55%)`),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: true } }
+            }
+        });
+
+        // Monthly line chart
+        const ctxMonth = document.getElementById('monthChart').getContext('2d');
+        new Chart(ctxMonth, {
+            type: 'line',
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: 'Total',
+                    data: monthData,
+                    fill: true,
+                    borderColor: 'rgb(220,53,69)',
+                    backgroundColor: 'rgba(220,53,69,0.15)',
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+}

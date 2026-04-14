@@ -21,6 +21,15 @@
                             <span asp-validation-for="CategoryName" class="text-danger"></span>
                         </div>
 
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Loại (Thu / Chi)</label>
+                            <select asp-for="Type" class="form-select border-primary" required>
+                                <option value="Expense">Chi</option>
+                                <option value="Income">Thu</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger"></span>
+                        </div>
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg fw-bold">Xác nhận tạo</button>
                             <a asp-action="Index" class="btn btn-outline-secondary">Hủy bỏ</a>

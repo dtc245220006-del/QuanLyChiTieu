@@ -21,8 +21,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Type" class="form-label">Loại</label>
-                    <input asp-for="Type" class="form-control" />
+                    <label asp-for="Type" class="form-label"> Chọn Loại</label>
+                    <select asp-for="Type" class="form-select" required>
+                        <option value="Expense">Chi</option>
+                        <option value="Income">Thu</option>
+                    </select>
                     <span asp-validation-for="Type" class="text-danger small"></span>
                 </div>
 
