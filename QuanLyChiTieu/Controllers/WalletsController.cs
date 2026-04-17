@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -58,28 +59,58 @@ namespace QuanLyChiTieu.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WalletId,WalletName,Balance")] Wallet wallet)
+        public async Task<IActionResult> Create([Bind("WalletId,UserId,WalletName,Balance")] Wallet wallet)
         {
-            // 1. Tự sinh ID cho Ví (m đã có)
             if (string.IsNullOrEmpty(wallet.WalletId))
             {
                 wallet.WalletId = "W" + Guid.NewGuid().ToString().Substring(0, 7).ToUpper();
             }
 
-            // 2. QUAN TRỌNG: Gán UserId cho ví
-            // Mở SQL Server, xem bảng UserAccount có mã nào (ví dụ 'U001' hoặc 'Admin') rồi điền vào đây
-            wallet.UserId = "2"; // Thay 'U001' bằng một ID thật đang có trong bảng User của m
+            // If the form didn't supply UserId, try to resolve current logged-in user
+            if (string.IsNullOrEmpty(wallet.UserId))
+            {
+                var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.Identity?.Name;
+                if (!string.IsNullOrEmpty(claim))
+                {
+                    var user = await _context.UserAccounts
+                        .FirstOrDefaultAsync(u => u.UserId == claim || u.Username == claim || u.Email == claim);
+                    if (user != null) wallet.UserId = user.UserId;
+                }
+            }
 
-            // 3. Xóa kiểm tra lỗi Validation cho các bảng liên quan
+            // Fallback: use any existing user in DB (so FK constraint is satisfied)
+            if (string.IsNullOrEmpty(wallet.UserId))
+            {
+                var anyUserId = await _context.UserAccounts.Select(u => u.UserId).FirstOrDefaultAsync();
+                if (string.IsNullOrEmpty(anyUserId))
+                {
+                    ModelState.AddModelError("", "No user accounts exist. Create a user first or select an owner.");
+                }
+                else
+                {
+                    wallet.UserId = anyUserId;
+                }
+            }
+
+            // Remove navigation validation entries
             ModelState.Remove("User");
             ModelState.Remove("Transactions");
 
             if (ModelState.IsValid)
             {
-                _context.Add(wallet);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(wallet);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi lưu Database: " + ex.Message);
+                }
             }
+
+            ViewData["UserId"] = new SelectList(_context.UserAccounts, "UserId", "UserId", wallet.UserId);
             return View(wallet);
         }
 

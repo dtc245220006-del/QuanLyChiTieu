@@ -15,13 +15,22 @@
                     <form asp-action="Create" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
+                       
                         <div class="mb-3">
-                            <label class="form-label small text-uppercase opacity-75">Tên ví (Ví dụ: ATM, Tiền mặt...)</label>
-                            <input asp-for="WalletName" class="form-control bg-dark text-white border-secondary" placeholder="Nhập tên ví..." required />
+                            <label class="form-label small text-uppercase opacity-75">Tên Ngân Hàng</label>
+                            
+                            <select asp-for="WalletName" class="form-control bg-dark text-white border-secondary" placeholder="Chọn Ngân Hàng..." required>
+                                <option >MBBANK </option>
+                                <option >TECHCOMBANK</option>
+                                <option>MOMO</option>
+                                <option>VIB</option>
+                                <option>VIETCOMBANK</option>
+                                <option>AGRIBANK</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small text-uppercase opacity-75">Số dư ban đầu</label>
+                            <label class="form-label small text-uppercase opacity-75">Nhập số tiền</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-secondary border-0 text-white">VNĐ</span>
                                 <input asp-for="Balance" type="number" class="form-control bg-dark text-white border-secondary" placeholder="0" required />
