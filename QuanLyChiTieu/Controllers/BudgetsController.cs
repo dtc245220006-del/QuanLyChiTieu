@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -49,16 +50,47 @@ namespace QuanLyChiTieu.Controllers
                 budget.BudgetId = "B" + Guid.NewGuid().ToString().Substring(0, 7).ToUpper();
             }
 
-            // 2. QUAN TRỌNG: Dán cái mã m vừa COPY ở Bước 1 vào đây
-            // Thay "Dán_Mã_Thật_Ở_Đây" bằng mã m lấy được từ SQL
-            budget.UserId = "2";
-
-            // 3. Fix lỗi monthYear nếu m không nhập từ giao diện
-            // 3. Fix lỗi monthYear: Vì của m là kiểu String nên phải chuyển sang chuỗi
+            // 2. Fix MonthYear nếu không nhập từ giao diện
             if (string.IsNullOrEmpty(budget.MonthYear))
             {
-                // Gán mặc định là tháng/năm hiện tại theo định dạng chuỗi
                 budget.MonthYear = DateTime.Now.ToString("MM/yyyy");
+            }
+
+            // 3. Determine a valid UserId (do NOT hard-code)
+            // Prefer the posted UserId if present and exists in DB
+            string resolvedUserId = null;
+            if (!string.IsNullOrEmpty(budget.UserId))
+            {
+                var exists = await _context.UserAccounts.AnyAsync(u => u.UserId == budget.UserId);
+                if (exists) resolvedUserId = budget.UserId;
+            }
+
+            // If no valid posted UserId, try to use current logged-in user
+            if (resolvedUserId == null)
+            {
+                var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.Identity?.Name;
+                if (!string.IsNullOrEmpty(claim))
+                {
+                    var user = await _context.UserAccounts
+                        .FirstOrDefaultAsync(u => u.UserId == claim || u.Username == claim || u.Email == claim);
+                    if (user != null) resolvedUserId = user.UserId;
+                }
+            }
+
+            // Fallback: use any existing user in DB (so FK constraint is satisfied)
+            if (resolvedUserId == null)
+            {
+                resolvedUserId = await _context.UserAccounts.Select(u => u.UserId).FirstOrDefaultAsync();
+            }
+
+            if (string.IsNullOrEmpty(resolvedUserId))
+            {
+                // No user exists in DB -> cannot create budget
+                ModelState.AddModelError("", "No user account available. Create a user first or select an owner.");
+            }
+            else
+            {
+                budget.UserId = resolvedUserId;
             }
 
             // 4. Xóa kiểm tra lỗi Validation cho các bảng liên quan để nút Submit hoạt động
@@ -76,7 +108,7 @@ namespace QuanLyChiTieu.Controllers
                 catch (Exception ex)
                 {
                     // Nếu vẫn lỗi, nó sẽ báo ra đây cho m xem
-                    ModelState.AddModelError("", "Lỗi DB: " + ex.InnerException?.Message);
+                    ModelState.AddModelError("", "Lỗi DB: " + ex.InnerException?.Message ?? ex.Message);
                 }
             }
 
